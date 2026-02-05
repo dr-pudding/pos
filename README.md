@@ -7,3 +7,9 @@ You will need a working installation of NixOS if you do not have one already. Pl
 - A primary user with sudo access.
 - A temporary internet connection.
     - The easiest solution is to use ethernet or USB tethering with a device connected to WiFi.
+
+Once these conditions are met, you can start the intallation using the provided setup script:
+
+```
+curl https://raw.githubusercontent.com/dr-pudding/pos/refs/heads/main/setup.sh | sudo sh
+```

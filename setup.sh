@@ -22,4 +22,4 @@ echo \
     > /etc/nixos/flake.nix
 
 # Rebuild the NixOS configuration.
-nixos-rebuild switch -v
+nixos-rebuild switch -v --experimental-features 'nix-command flakes'
