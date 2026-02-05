@@ -1,19 +1,21 @@
 #!/usr/bin/env sh
 
-# Create the root flake.nix system configuration file.
+# create the root flake.nix system configuration file.
 echo \
 '{
-    description = "puddingOS";
+    description = "puddingos";
+
     inputs = {
         pos.url = "github:dr-pudding/pos/main";
         nixpkgs.follows = "pos/nixpkgs";
     };
+
     outputs = { pos, ... }: {
-        nixosConfigurations.Thonkpad = (pos.nixosConfigurations.makeSystem {
+        nixosconfigurations.puddingOS = (pos.nixosconfigurations.makesystem {
             username = "jack";
-        }).extendModules {
+        }).extendmodules {
             modules = [ 
-                { networking.hostName = "Thonkpad"; }
+                { networking.hostname = "puddingOS"; }
                 ./hardware-configuration.nix
             ];
         };
@@ -21,5 +23,5 @@ echo \
 }'\
     > /etc/nixos/flake.nix
 
-# Rebuild the NixOS configuration.
-sudo env NIX_CONFIG="experimental-features = nix-command flakes" nixos-rebuild switch
+# rebuild the nixos configuration.
+sudo env nix_config="experimental-features = nix-command flakes" nixos-rebuild switch '#puddingOS'
