@@ -4,7 +4,25 @@
 read -p "Enter hostname for this system [puddingOS]: " HOSTNAME </dev/tty
 HOSTNAME=${HOSTNAME:-puddingOS}
 
+# Detect EFI vs BIOS.
+if [ -d /sys/firmware/efi ]; then
+    BOOT_MODE="efi"
+    echo "Detected EFI boot mode"
+else
+    BOOT_MODE="bios"
+    echo "Detected BIOS boot mode"
+    # Prompt for boot device with default
+    read -p "Enter boot device for GRUB [/dev/sda]: " BOOT_DEVICE </dev/tty
+    BOOT_DEVICE=${BOOT_DEVICE:-/dev/sda}
+fi
+
 # Create the root flake.nix system configuration file.
+if [ "$BOOT_MODE" = "efi" ]; then
+    BOOT_CONFIG="{ }"  # EFI config is default in puddingOS.
+else
+    BOOT_CONFIG="{ boot.loader.grub.device = \"$BOOT_DEVICE\"; boot.loader.grub.efiSupport = false; }"
+fi
+
 echo \
 "{
     description = \"puddingos\";
@@ -19,11 +37,15 @@ echo \
             modules = [ 
                 { networking.hostName = \"${HOSTNAME}\"; }
                 ./hardware-configuration.nix
+                ${BOOT_CONFIG}
             ];
         };
     };
 }"\
     > /etc/nixos/flake.nix
+
+# Clear flake lock.
+sudo rm -f /etc/nixos/flake.lock
 
 # Set the hostname immediately so nixos-rebuild can match it.
 sudo hostname "$HOSTNAME"
