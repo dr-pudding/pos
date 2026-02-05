@@ -24,4 +24,4 @@ echo \
     > /etc/nixos/flake.nix
 
 # rebuild the nixos configuration.
-sudo env nix_config="experimental-features = nix-command flakes" nixos-rebuild switch '#puddingOS'
+sudo env nix_config="experimental-features = nix-command flakes" nixos-rebuild switch --flake '#puddingOS'
