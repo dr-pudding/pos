@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 # Prompt for hostname with default.
-read -p "Enter hostname for this system [puddingOS]: " HOSTNAME
+read -p "Enter hostname for this system [puddingOS]: " HOSTNAME </dev/tty
 HOSTNAME=${HOSTNAME:-puddingOS}
 
 # Create the root flake.nix system configuration file.
