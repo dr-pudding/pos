@@ -1,27 +1,32 @@
 #!/usr/bin/env sh
 
-# create the root flake.nix system configuration file.
+# Prompt for hostname with default.
+read -p "Enter hostname for this system [puddingOS]: " HOSTNAME
+HOSTNAME=${HOSTNAME:-puddingOS}
+
+# Create the root flake.nix system configuration file.
 echo \
-'{
-    description = "puddingos";
-
+"{
+    description = \"puddingos\";
     inputs = {
-        pos.url = "github:dr-pudding/pos/main";
-        nixpkgs.follows = "pos/nixpkgs";
+        pos.url = \"github:dr-pudding/pos/main\";
+        nixpkgs.follows = \"pos/nixpkgs\";
     };
-
     outputs = { pos, ... }: {
-        nixosconfigurations.puddingOS = (pos.nixosconfigurations.makesystem {
-            username = "jack";
-        }).extendmodules {
+        nixosConfigurations.$HOSTNAME = (pos.nixosConfigurations.makeSystem {
+            username = \"jack\";
+        }).extendModules {
             modules = [ 
-                { networking.hostname = "puddingOS"; }
+                { networking.hostname = \"$HOSTNAME\"; }
                 ./hardware-configuration.nix
             ];
         };
     };
-}'\
+}"\
     > /etc/nixos/flake.nix
 
-# rebuild the nixos configuration.
-sudo env nix_config="experimental-features = nix-command flakes" nixos-rebuild switch --flake '#puddingOS'
+# Set the hostname immediately so nixos-rebuild can match it.
+sudo hostname "$HOSTNAME"
+
+# Rebuild the nixos configuration (now it will match the hostname automatically).
+sudo env NIX_CONFIG="experimental-features = nix-command flakes" nixos-rebuild switch
