@@ -17,7 +17,7 @@ echo \
             username = \"jack\";
         }).extendModules {
             modules = [ 
-                { networking.hostname = \"${HOSTNAME}\"; }
+                { networking.hostName = \"${HOSTNAME}\"; }
                 ./hardware-configuration.nix
             ];
         };
