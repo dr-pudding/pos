@@ -13,11 +13,11 @@ echo \
         nixpkgs.follows = \"pos/nixpkgs\";
     };
     outputs = { pos, ... }: {
-        nixosConfigurations.$HOSTNAME = (pos.nixosConfigurations.makeSystem {
+        nixosConfigurations.${HOSTNAME} = (pos.nixosConfigurations.makeSystem {
             username = \"jack\";
         }).extendModules {
             modules = [ 
-                { networking.hostname = \"$HOSTNAME\"; }
+                { networking.hostname = \"${HOSTNAME}\"; }
                 ./hardware-configuration.nix
             ];
         };
@@ -28,5 +28,5 @@ echo \
 # Set the hostname immediately so nixos-rebuild can match it.
 sudo hostname "$HOSTNAME"
 
-# Rebuild the nixos configuration (now it will match the hostname automatically).
+# Rebuild the nixos configuration.
 sudo env NIX_CONFIG="experimental-features = nix-command flakes" nixos-rebuild switch
