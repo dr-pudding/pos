@@ -52,3 +52,5 @@ sudo hostname "$HOSTNAME"
 
 # Rebuild the nixos configuration.
 sudo env NIX_CONFIG="experimental-features = nix-command flakes" nixos-rebuild switch
+
+echo "Installation complete. Reboot is recommended."
