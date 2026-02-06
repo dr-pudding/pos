@@ -11,14 +11,14 @@ if [ -d /sys/firmware/efi ]; then
 else
     BOOT_MODE="bios"
     echo "Detected BIOS boot mode"
-    # Prompt for boot device with default.
+    # Prompt for boot device with default
     read -p "Enter boot device for GRUB [/dev/sda]: " BOOT_DEVICE </dev/tty
     BOOT_DEVICE=${BOOT_DEVICE:-/dev/sda}
 fi
 
 # Create the root flake.nix system configuration file.
 if [ "$BOOT_MODE" = "efi" ]; then
-    BOOT_CONFIG="{ }"
+    BOOT_CONFIG="{ }"  # EFI config is default in puddingOS.
 else
     BOOT_CONFIG="{ boot.loader.grub.device = \"$BOOT_DEVICE\"; boot.loader.grub.efiSupport = false; }"
 fi
@@ -37,7 +37,7 @@ echo \
             modules = [ 
                 { networking.hostName = \"${HOSTNAME}\"; }
                 ./hardware-configuration.nix
-                $BOOT_CONFIG
+                ${BOOT_CONFIG}
             ];
         };
     };
