@@ -10,7 +10,7 @@
                 gfxmodeEfi = "1920x1080";
 
                 # Default to EFI, can be override if using BIOS.
-                efiSupport = lib.mkDefaultrue;
+                efiSupport = lib.mkDefault true;
                 device = lib.mkDefault "nodev";
             };
 
