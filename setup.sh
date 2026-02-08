@@ -27,7 +27,7 @@ echo \
 "{
     description = \"puddingos\";
     inputs = {
-        pos.url = \"github:dr-pudding/pos/main\";
+        pos.url = \"github:dr-pudding/pos/dev\";
         nixpkgs.follows = \"pos/nixpkgs\";
     };
     outputs = { pos, ... }: {
