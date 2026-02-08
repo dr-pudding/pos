@@ -20,14 +20,15 @@
             nixpkgs.lib.nixosSystem {
                 system = "x86_64-linux";
                 modules = [
-                    ./boot.nix
+                    ./system.nix
 
                     {
-                        system.stateVersion = "25.11";
                         users.users.${username} = {
                             isNormalUser = true;
                             extraGroups = ["wheel"];
                         };
+
+                        system.stateVersion = "25.11";
                     }
                 ];
             };
