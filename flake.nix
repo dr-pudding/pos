@@ -7,13 +7,13 @@
         #    inputs.nixpkgs.follows = "nixpkgs";
         #};
 
-        #catppuccin.url = "github:catppuccin/nix/release-25.11";
+        catppuccin.url = "github:catppuccin/nix/release-25.11";
     };
 
     outputs = {
         nixpkgs,
         #home-manager,
-        #catppuccin,
+        catppuccin,
         ...
     }: {
         nixosConfigurations.makeSystem = {username}:
