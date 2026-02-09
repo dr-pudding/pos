@@ -17,6 +17,8 @@
                 # Default to EFI, can be override if using BIOS.
                 efiSupport = lib.mkDefault true;
                 device = lib.mkDefault "nodev";
+
+                configurationName = "puddingOS";
             };
 
             # Required for EFI boot (I think...?)
@@ -66,7 +68,7 @@
     # Colorscheme and style customizations.
     catppuccin = {
         enable = true;
-        flavour = "macchiato";
+        flavor = "macchiato";
         accent = "lavender";
 
         grub.enable = true;
@@ -75,7 +77,10 @@
         sddm = {
             enable = true;
             font = "OverpassMNerdFont";
-            fontsize = "12";
+            fontSize = "12";
         };
     };
+    
+    # Main font set for system applications.
+    fonts.packages = [pkgs.nerd-fonts.overpass];
 }
