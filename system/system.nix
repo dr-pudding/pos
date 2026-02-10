@@ -57,6 +57,9 @@
 
         # Used by gamescope and certain other applications.
         xserver.enable = true;
+
+	# SSH server for remote access.
+	openssh.enable = true;
     };
 
     # Primary window manager/desktop environment base.
