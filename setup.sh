@@ -67,7 +67,7 @@ else
     POS_HOME_URL="github:dr-pudding/pos/main?dir=home"
 fi
 
-# Detect EFI vs BIOS (only if installing system).
+# Detect EFI vs BIOS (only if installing system)
 if [ "$INSTALL_SYSTEM" = true ]; then
     if [ -d /sys/firmware/efi ]; then
         BOOT_MODE="efi"
@@ -112,9 +112,9 @@ if [ "$INSTALL_SYSTEM" = true ] && [ "$INSTALL_HOME" = true ]; then
                     home-manager = {
                         useGlobalPkgs = true;
                         useUserPackages = true;
-                        users.${ACTUAL_USER} = (pos-home.homeConfigurations.makeHome {
+                        users.${ACTUAL_USER}.imports = pos-home.homeModules.default {
                             username = \"$ACTUAL_USER\";
-                        }).config;
+                        };
                     };
                 }
                 ./hardware-configuration.nix
@@ -149,7 +149,7 @@ elif [ "$INSTALL_SYSTEM" = true ]; then
     };
 }"
 else
-    # Home only (try to integrate into existing NixOS config).
+    # Home only - integrate into existing NixOS config.
     FLAKE_CONTENT="{
     description = \"puddingos\";
 
@@ -178,9 +178,9 @@ else
                     home-manager = {
                         useGlobalPkgs = true;
                         useUserPackages = true;
-                        users.${ACTUAL_USER} = (pos-home.homeConfigurations.makeHome {
+                        users.${ACTUAL_USER}.imports = pos-home.homeModules.default {
                             username = \"$ACTUAL_USER\";
-                        }).config;
+                        };
                     };
                 }
             ];

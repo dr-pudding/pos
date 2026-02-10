@@ -7,28 +7,48 @@
             inputs.nixpkgs.follows = "nixpkgs";
         };
     };
+
     outputs = { nixpkgs, home-manager, catppuccin, ... }: {
+        # For standalone home-manager.
         homeConfigurations.makeHome = { username }: 
             home-manager.lib.homeManagerConfiguration {
                 pkgs = nixpkgs.legacyPackages.x86_64-linux;
-                    modules = [
-                        catppuccin.homeManagerModules.default
-                        ./home.nix
+                modules = [
+                    catppuccin.homeModules.default
+                    #./home.nix
+                    {
+                        home = {
+                            username = username;
+                            homeDirectory = "/home/${username}";
+                            stateVersion = "25.11";
+                        };
                         
-                        {
-                            home = {
-                                username = username;
-                                homeDirectory = "/home/${username}";
-                                stateVersion = "25.11";
-                            };
-                
-                            catppuccin = {
-                                enable = true;
-                                flavor = "macchiato";
-                                accent = "lavender";
-                            };
-                        }
-                    ];
+                        catppuccin = {
+                            enable = true;
+                            flavor = "macchiato";
+                            accent = "lavender";
+                        };
+                    }
+                ];
             };
-      };
+        
+        # For NixOS module integration.
+        homeModules.default = { username }: [
+            catppuccin.homeModules.default
+            #./home.nix
+            {
+                home = {
+                    username = username;
+                    homeDirectory = "/home/${username}";
+                    stateVersion = "25.11";
+                };
+                
+                catppuccin = {
+                    enable = true;
+                    flavor = "macchiato";
+                    accent = "lavender";
+                };
+            }
+        ];
+    };
 }
