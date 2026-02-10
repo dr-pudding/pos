@@ -67,7 +67,7 @@ else
     POS_HOME_URL="github:dr-pudding/pos/main?dir=home"
 fi
 
-# Detect EFI vs BIOS (only if installing system)
+# Detect EFI vs BIOS (only if installing system).
 if [ "$INSTALL_SYSTEM" = true ]; then
     if [ -d /sys/firmware/efi ]; then
         BOOT_MODE="efi"
@@ -149,7 +149,7 @@ elif [ "$INSTALL_SYSTEM" = true ]; then
     };
 }"
 else
-    # Home only - integrate into existing NixOS config.
+    # Home only (try to integrate into existing NixOS config).
     FLAKE_CONTENT="{
     description = \"puddingos\";
 

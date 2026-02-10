@@ -7,13 +7,12 @@
             inputs.nixpkgs.follows = "nixpkgs";
         };
     };
-
     outputs = { nixpkgs, home-manager, catppuccin, ... }: {
         homeConfigurations.makeHome = { username }: 
             home-manager.lib.homeManagerConfiguration {
                 pkgs = nixpkgs.legacyPackages.x86_64-linux;
                     modules = [
-                        catppuccin.homeModules.default
+                        catppuccin.homeManagerModules.default
                         ./home.nix
                         
                         {
