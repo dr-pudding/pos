@@ -13,6 +13,10 @@
             url = "path:./shell";
             inputs.nixpkgs.follows = "nixpkgs";
         };
+        desktop = {
+            url = "path:./desktop";
+            inputs.nixpkgs.follows = "nixpkgs";
+        };
     };
 
     outputs = {
@@ -20,11 +24,13 @@
         home-manager,
         catppuccin,
         shell,
+        desktop,
         ...
     }: let
         modules = username: [
             catppuccin.homeModules.default # Colorscheme and styling.
             shell.homeManagerModules.default # Install and configure CLI applications.
+            desktop.homeManagerModules.default # Install and configure desktop applications.
 
             {
                 home = {

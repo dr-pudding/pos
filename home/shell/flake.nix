@@ -11,6 +11,9 @@
     outputs = {nixvim, ...}: {
         homeManagerModules.default = {
             imports = [
+                # Main command shell.
+                ./shell.nix
+
                 # Text editor.
                 nixvim.homeManagerModules.nixvim
                 ./vi.nix
