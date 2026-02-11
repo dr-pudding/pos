@@ -56,8 +56,8 @@ if [ "$DEV_MODE" = "y" ] || [ "$DEV_MODE" = "Y" ]; then
             echo "Cloning for local development requires git. On NixOS, you can run 'nix-shell -p git' to quickly enter a temporary shell with git installed."
             exit 1
         fi
-        echo "Cloning pos repository (dev branch) to /home/$ACTUAL_USER/.pos..."
-        git clone -b dev https://github.com/dr-pudding/pos.git /home/$ACTUAL_USER/.pos
+        echo "Cloning pos repository to /home/$ACTUAL_USER/.pos..."
+        git clone -b https://github.com/dr-pudding/pos.git /home/$ACTUAL_USER/.pos
         chown -R $ACTUAL_USER:users /home/$ACTUAL_USER/.pos
     fi
     POS_SYSTEM_URL="path:/home/$ACTUAL_USER/.pos/system"
