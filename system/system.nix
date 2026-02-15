@@ -8,7 +8,7 @@
         loader = {
             grub = {
                 enable = true;
-                useOSProber = true;
+                useOSProber = false;
 
                 # Install as removable allows maintanence from a live image.
                 efiInstallAsRemovable = false;
@@ -35,9 +35,6 @@
             "udev.log_priority=3"
             "rd.systemd.show_status=auto"
         ];
-
-        # Necessary for VirtualBox.
-        blacklistedKernelModules = ["kvm-intel"];
     };
 
     # OpenGL drivers with legacy support.
@@ -57,9 +54,6 @@
 
         # Used by gamescope and certain other applications.
         xserver.enable = true;
-
-	# SSH server for remote access.
-	openssh.enable = true;
     };
 
     # Primary window manager/desktop environment base.
@@ -83,7 +77,7 @@
             fontSize = "12";
         };
     };
-    
+
     # Main font set for system applications.
     fonts.packages = [pkgs.nerd-fonts.overpass];
 }

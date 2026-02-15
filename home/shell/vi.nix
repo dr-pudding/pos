@@ -85,7 +85,7 @@
                             command = "alejandra";
                             args = [
                                 "--experimental-config"
-                                "${config.home.homeDirectory}/.config/pos/alejandra.toml"
+                                "${config.home.homeDirectory}/.config/alejandra.toml"
                             ];
                         };
 
@@ -296,11 +296,14 @@
         ];
     };
 
+    # Define an extra alias for elevated editing while retaining userspace configurations.
+    programs.fish.shellAliases.svi = "sudo -E nvim";
+
     # Package used by Telescope for live grep.
     home.packages = with pkgs; [ripgrep];
 
     # Configure the nix language formatter to use four-space indentation.
-    xdg.configFile."pos/alejandra.toml".text = ''
+    xdg.configFile."alejandra.toml".text = ''
         # (experimental) Configuration options for Alejandra
         indentation = "FourSpaces" # Or: TwoSpaces, Tabs
     '';

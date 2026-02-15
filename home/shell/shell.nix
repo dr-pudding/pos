@@ -2,11 +2,6 @@
     # Use fish as the main terminal shell.
     programs.fish = {
         enable = true;
-
-        shellAliases = {
-            # Basic shortcuts.
-            svi = "sudo -E nvim";
-        };
     };
 
     # Default shell behaviour for fish (see https://nixos.wiki/wiki/Fish).

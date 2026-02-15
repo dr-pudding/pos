@@ -37,6 +37,7 @@
                     username = username;
                     homeDirectory = "/home/${username}";
                     stateVersion = "25.11";
+                    sessionVariables.POS_HOME = "25.11";
                 };
 
                 catppuccin = {

@@ -1,23 +1,28 @@
 {
     inputs = {
+        unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
         nixpkgs.follows = "nixpkgs";
     };
 
     outputs = {...}: {
         homeManagerModules.default = {
-            wayland.windowManager.hyprland = {
-                enable = true;
-                package = null;
-                portalPackage = null;
+            lib,
+            config,
+            ...
+        }: {
+            imports = [
+                ./hyprland.nix # Desktop window manager.
+                ./waybar.nix # Status bar at the top of the screen.
+                ./qb.nix # Vim-like web browser.
+            ];
 
-                settings = {
-                    "$mod" = "SUPER";
-
-                    bind = [
-                        "$mod, T, exec, alacritty"
-                    ];
-                };
-            };
+            # Copy over the default wallpaper if one has not been assigned.
+            home.activation.copyWallpaper = lib.hm.dag.entryAfter ["writeBoundary"] ''
+                if [ ! -f ${config.home.homeDirectory}/stuff/wallpaper.png ]; then
+                  mkdir -p ${config.home.homeDirectory}/stuff
+                  cp ${./cat-waves.png} ${config.home.homeDirectory}/stuff/wallpaper.png
+                fi
+            '';
 
             # Graphical terminal emulator.
             programs.alacritty = {
