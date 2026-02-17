@@ -1,4 +1,9 @@
-{pkgs, ...}: {
+{
+    pkgs,
+    lib,
+    fuzzelRun,
+    ...
+}: {
     wayland.windowManager.hyprland = {
         enable = true;
         package = null;
@@ -16,6 +21,7 @@
                 "$mod, B, exec, qutebrowser" # Browser shortcut.
 
                 # Quick-launch utilities.
+                "$$mod, Z, exec, ${lib.getExe fuzzelRun}" # Application launcher shortcut.
                 ", Print, exec, hyprshot --mode region --output-folder $HOME/stuff/screenshots" # Screenshot shortcut.
 
                 # Manage windows.
