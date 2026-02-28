@@ -14,6 +14,8 @@ in {
     imports = [
         "${catppuccin}/modules/nixos"
         ./grub.nix
+        ./godot.nix
+        ./steam.nix
     ];
 
     # Configuration for toggling puddingOS and other submodules.
@@ -46,7 +48,7 @@ in {
 
             # Unified color and styling for system applications.
             catppuccin = {
-           #     enable = true;
+                #     enable = true;
                 flavor = "macchiato";
                 accent = "lavender";
                 tty.enable = true;

@@ -2,13 +2,13 @@
     lib,
     config,
     ...
-}: with lib; {
+}:
+with lib; {
     config = mkIf (config.pos.hypr.enable
         && config.pos.enable) {
         # Top status bar.
         programs.waybar = {
             enable = true;
-
             settings.main = {
                 modules-left = ["custom/run" "hyprland/workspaces"];
                 modules-center = ["clock"];
@@ -38,6 +38,10 @@
                     format = "<span size='15900'>󰥔</span> {:%I:%M %p}";
                     format-alt = "<span size='15900'></span> {:%Y-%m-%d}";
                     tooltip = false;
+                };
+
+                "tray" = {
+                    spacing = 8;
                 };
 
                 # Battery display for laptops/etc.
@@ -73,6 +77,8 @@
                 "wireplumber" = {
                     format = "<span size='12000'>󰓃</span> {volume}%";
                     format-muted = "<span size='15900'>󰖁</span> {volume}%";
+                    exec = "pwvucontrol";
+                    on-click = "pwvucontrol";
                     tooltip = false;
                 };
 

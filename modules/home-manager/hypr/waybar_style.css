@@ -120,6 +120,14 @@
     padding-left: 8px;
 }
 
+#wireplumber:hover {
+    background-color: @overlay0;
+}
+
+#wireplumber.active {
+    background-color: @surface1;
+}
+
 /* End session utility. */
 #custom-exit {
     font-size: 20px;

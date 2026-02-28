@@ -25,6 +25,12 @@ with lib; {
                 "$mod" = "SUPER";
                 exec-once = ["waybar"];
 
+                windowrulev2 = [
+                    "float, class:^(com.saivert.pwvucontrol)$"
+                    "size 600 400, class:^(com.saivert.pwvucontrol)$"
+                    "center, class:^(com.saivert.pwvucontrol)$"
+                ];
+
                 bind = [
                     # Quick-launch applications.
                     "$mod, T, exec, alacritty" # Terminal emulator shortcut.
@@ -173,6 +179,7 @@ with lib; {
         home.packages = with pkgs; [
             hyprshot # Screenshot utility.
             playerctl # Media control (play, pause, etc.)
+            pwvucontrol # Graphical audio control utility.
             brightnessctl # Laptop backlight control
             libnotify # Notification tools
             inotify-tools # Waybar wants this for some reason

@@ -1,4 +1,5 @@
 {
+    pkgs,
     config,
     lib,
     ...
@@ -12,7 +13,7 @@ with lib; {
         };
     };
 
-    config = mkIf (config.pos.grub.enable
+    config = mkIf (config.pos.steam.enable
         && config.pos.enable) {
         programs = {
             # Main desktop gaming platform.
@@ -30,13 +31,6 @@ with lib; {
                 capSysNice = true;
             };
         };
-
-        # Allow proprietary software from Steam.
-        nixpkgs.config.allowUnfreePredicate = pkg:
-            builtins.elem (lib.getName pkg) [
-                "steam"
-                "steam-unwrapped"
-            ];
 
         # Create a script to launch gamescope session via TTY.
         environment.systemPackages = with pkgs; [

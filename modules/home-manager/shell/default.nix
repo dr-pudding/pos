@@ -5,6 +5,8 @@
     ...
 }:
 with lib; {
+    imports = [./rgr.nix];
+
     options.pos.shell = {
         enable = mkOption {
             type = types.bool;

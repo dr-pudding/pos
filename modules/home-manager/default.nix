@@ -10,8 +10,8 @@ in {
     imports = [
         (catppuccin + "/modules/home-manager")
         ./mangohud.nix
-        ./shell.nix
         ./qb.nix
+        ./shell
         ./hypr
         ./vi
     ];
