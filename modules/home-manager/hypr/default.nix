@@ -148,6 +148,7 @@ with lib; {
             # Notification daemon (not well configured, waiting for a necessary use case)
             dunst.enable = true;
         };
+        catppuccin.dunst.enable = true;
 
         # Copy over the default wallpaper if one has not been assigned.
         home.activation.copyWallpaper = lib.hm.dag.entryAfter ["writeBoundary"] ''

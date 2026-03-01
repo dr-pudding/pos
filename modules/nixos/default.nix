@@ -46,6 +46,12 @@ in {
                 enable32Bit = true;
             };
 
+            # Pipewire audio drivers with PulseAudio support.
+            services.pipewire = {
+                enable = true;
+                pulse.enable = true;
+            };
+
             # Unified color and styling for system applications.
             catppuccin = {
                 #     enable = true;

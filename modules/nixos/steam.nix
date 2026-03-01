@@ -23,6 +23,9 @@ with lib; {
                 remotePlay.openFirewall = true;
                 dedicatedServer.openFirewall = true;
                 localNetworkGameTransfers.openFirewall = true;
+
+                # Overriding Steam's environment to allow evdev for input.
+                extraCompatPackages = [];
             };
 
             # Isolated graphical environment for gaming.
@@ -32,10 +35,21 @@ with lib; {
             };
         };
 
+        # Disable HIDAPI, use evdev instead. Required for Xbox Controllers over Bluetooth.
+        environment.sessionVariables = {
+            SDL_JOYSTICK_HIDAPI = "0";
+        };
+
+        # Modern drivers for xinput.
+        boot = {
+            extraModulePackages = with config.boot.kernelPackages; [xpadneo];
+            kernelModules = ["hid-xpadneo"];
+        };
+
         # Create a script to launch gamescope session via TTY.
         environment.systemPackages = with pkgs; [
             gamescope-wsi # Required for extended Windows features like HDR.
-            (pkgs.writeScriptBin "gslaunch" ''
+            (pkgs.writeScriptBin "startgs" ''
                 #!/usr/bin/env bash
                 set -xeuo pipefail
 
