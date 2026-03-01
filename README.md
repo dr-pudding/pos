@@ -46,9 +46,9 @@ This would allow you to automatically install and configure a working Grub setup
 
 Note that `pos.enable = true` must also be set as a prerequisite, or `pos.grub.enable = true` will have no effect. This logic holds true for the entire tree of submodules. If a parent module is disabled, all of its child submodules will be disabled as well.
 
-The following section lists all puddingOS submodules and their configuration options. Remember that puddingOS itself is composed of a NixOS module and a home-manager module, so their submodules are separate as well.
+The following sections list all puddingOS submodules and their configuration options. Remember that puddingOS itself is composed of a NixOS module and a home-manager module, so their submodules are separate as well.
 
-### nixos
+### NixOS submodules
 #### pos core
 When `pos.enable = true` is set, a few things will be enabled by default. This includes basic audio/video drivers, Catppuccin color setup, font packages, etc.
 
@@ -71,7 +71,7 @@ When `pos.godot.enable = true`, the only thing that will happen by default is th
 
 Additionally, you can optionally set `pos.godot.remoteDebug.enable = true` to open up firewall ports for remote debugging. By default, these are ports 6007 and 6008 over UDP and TCP. If you want to use a non-default port, you will have to change it in the Godot editor settings and then manually open the firewall ports in your NixOS configuration.
 
-### home-manager
+### home-manager submodules
 #### pos core
 When `pos.enable = true` is set, nothing will happen by default. It is only used to toggle the rest of the submodules at once.
 
