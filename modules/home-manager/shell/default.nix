@@ -44,16 +44,13 @@ with lib; {
             icons.filetype = {
                 "dir" = "󰉋";
             };
-            icons.name = {
-                #"system" = "";
-            };
         };
         catppuccin.lsd.enable = true;
 
         # Version control
         programs.git = {
             enable = true;
-            extraConfig = {
+            settings = {
                 init.defaultBranch = "main";
                 core.askpass = "";
             };
@@ -69,7 +66,22 @@ with lib; {
         programs.gpg.enable = true;
         services.gpg-agent = {
             enable = true;
-            pinentryPackage = pkgs.pinentry-tty;
+            pinentry.package = pkgs.pinentry-tty;
+        };
+
+        # Clipboard manager (also required by pass).
+        home.packages = [pkgs.wl-clipboard];
+        services.cliphist = {
+            enable = true;
+            allowImages = true;
+            systemdTargets = ["config.wayland.systemd.target"];
+
+            extraOptions = [
+                "-max-dedupe-search"
+                "10"
+                "-max-items"
+                "500"
+            ];
         };
 
         # Improved cat command and pager.

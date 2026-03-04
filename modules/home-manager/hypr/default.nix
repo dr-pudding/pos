@@ -26,9 +26,8 @@ with lib; {
                 exec-once = ["waybar"];
 
                 windowrulev2 = [
-                    "float, class:^(com.saivert.pwvucontrol)$"
-                    "size 600 400, class:^(com.saivert.pwvucontrol)$"
-                    "center, class:^(com.saivert.pwvucontrol)$"
+                    "fullscreen, class:^(com.saivert.pwvucontrol)$"
+                    "fullscreenstate 3 3, class:^(com.saivert.pwvucontrol)$"
                 ];
 
                 bind = [
