@@ -20,8 +20,19 @@ with lib; {
         programs.fish = {
             enable = true;
 
-            # Use fish for nix-shell.
-            shellAliases.nix-shell = "nix-shell --run fish";
+            shellAliases = {
+                # Use fish for nix-shell.
+                nix-shell = "nix-shell --run fish";
+
+                # I am aware that this could shadow the actual shell program called nsh,
+                # but if you enabled this shell module then you probably aren't using it.
+                # If you need both anyway, you can override this by using mkForce.
+                nsh = "nix-shell";
+            };
+
+            interactiveShellInit = ''
+                set fish_greeting;
+            '';
         };
         catppuccin.fish.enable = true;
 
