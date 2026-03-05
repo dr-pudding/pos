@@ -63,6 +63,8 @@ The core module also provides an interface for autostarting sessions on one or m
         # Simultaneously open a Hyprland session on tty1 and an X11 instance on TTY2.
         autostart.tty1 = "hyprland";
         autostart.tty2 = "startx";
+
+        # This can continue for tty3, tty4, etc...
     };
 }
 ```
@@ -73,7 +75,7 @@ Note that if an autostart program is configured for a TTY but autologinUser is n
 When `pos.grub.enable = true` is set, a full working configuration for the Grub bootloader will be enabled, complete with os-prober scanning. By default it will use EFI mode and autodetect the boot device, but it can be changed to BIOS mode by setting `pos.grub.device` to the drive you would like to use as the boot device.
 
 #### sddm
-When `pos.sddm.enable = true` is set, the SDDM display manager will be installed on started on boot.
+When `pos.sddm.enable = true` is set, the SDDM display manager will be installed and started on boot. Keep in mind that enabling the SDDM service will automatically start the greeter in TTY1. This will take priority over any program defined by `pos.sessions.autostart.tty1`. You probably don't want to use these two different methods of session management together anyway because it would be redundant to do so. If you insist, I would recommend overriding or disabling this module and configuring SDDM manually.
 
 #### hypr
 When `pos.hypr.enable = true` is set, the Hyprland tiling window manager will be installed and made selectable as a session by display managers. Since actual configuration of Hyprland happens on the user end, you will also need to enable the corresponding home-manager submodule to make full use of this.
