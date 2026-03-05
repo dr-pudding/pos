@@ -4,7 +4,32 @@
     pkgs,
     ...
 }: let
-    pos-cmd = pkgs.callPackage ./cmd {};
+    cfg = config.pos;
+
+    # Create a package for the pos CLI utility.
+    pythonWithPackages = pkgs.python3.withPackages (ps: [ps.click]);
+    pos-cmd = pkgs.stdenv.mkDerivation {
+        name = "pos";
+        src = ./.;
+        buildInputs = [pythonWithPackages];
+        nativeBuildInputs = [pkgs.makeWrapper];
+        installPhase = ''
+            # Copy Python module.
+            mkdir -p $out/bin $out/lib/pos
+            cp pos_cmd.py $out/lib/pos/
+
+            # Create wrapper for the pos command.
+            cat > $out/bin/pos << EOF
+            #!${pythonWithPackages}/bin/python3
+            import sys
+            sys.path.insert(0, "$out/lib/pos")
+            exec(open("$out/lib/pos/pos_cmd.py").read())
+            EOF
+            chmod +x $out/bin/pos
+        '';
+    };
+
+    # Install styling library for various applications.
     catppuccin = builtins.fetchTarball {
         url = "https://github.com/catppuccin/nix/archive/release-25.11.tar.gz";
         sha256 = "0p9v37l8fvm15ziig45ragqfk581584mgl425v1nkqrnkafzl8i3";
@@ -13,10 +38,10 @@ in {
     # Import dependencies and submodules.
     imports = [
         "${catppuccin}/modules/nixos"
-        ./grub.nix
-        ./godot.nix
-        ./steam.nix
         ./sessions.nix
+        ./grub
+        ./godot
+        ./steam
     ];
 
     # Configuration for toggling puddingOS and other submodules.
@@ -38,7 +63,7 @@ in {
 
     config = lib.mkMerge [
         # Core module (base configuration).
-        (lib.mkIf config.pos.enable {
+        (lib.mkIf cfg.enable {
             environment.systemPackages = [pos-cmd];
 
             # OpenGL drivers with legacy support.
@@ -55,7 +80,6 @@ in {
 
             # Unified color and styling for system applications.
             catppuccin = {
-                #     enable = true;
                 flavor = "macchiato";
                 accent = "lavender";
                 tty.enable = true;
@@ -66,7 +90,7 @@ in {
         })
 
         # SDDM module (display manager).
-        (lib.mkIf (config.pos.sddm.enable && config.pos.enable) {
+        (lib.mkIf (cfg.sddm.enable && cfg.enable) {
             services.displayManager.sddm = {
                 enable = true;
                 wayland.enable = true;
@@ -81,15 +105,11 @@ in {
         })
 
         # Hyprland module (desktop environment).
-        (lib.mkIf (config.pos.hypr.enable
-            && config.pos.enable) {
+        (lib.mkIf (cfg.hypr.enable && cfg.enable) {
             programs.hyprland = {
                 enable = true;
                 xwayland.enable = true;
             };
-
-            # Used to tell the puddingOS home-manager module to enable Hyprland config.
-            environment.sessionVariables.POS_HYPR = "true";
         })
     ];
 }

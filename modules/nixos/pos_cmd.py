@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import click
-
-from static import run_cmd
+from os import system as os_system
 
 
 @click.group(invoke_without_command=True)
@@ -40,6 +39,12 @@ def upgrade():
     """Upgrade the system (update + rebuild)."""
     update.invoke(ctx=click.Context(update))
     rebuild.invoke(ctx=click.Context(rebuild))
+
+
+def run_cmd(cmd):
+    """Run a command on the Linux terminal."""
+    print(f"> {cmd}")
+    os_system(cmd)
 
 
 if __name__ == "__main__":
