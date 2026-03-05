@@ -52,6 +52,23 @@ The following sections list all puddingOS submodules and their configuration opt
 #### pos core
 When `pos.enable = true` is set, a few things will be enabled by default. This includes basic audio/video drivers, Catppuccin color setup, font packages, etc.
 
+The core module also provides an interface for autostarting sessions on one or multiple TTYs. Most users are probably better off just using a display manager to handle this, but this might be useful if you want to automatically start multiple sessions at once:
+
+```nix
+{
+    pos.sessions = {
+        # Skip password login and automatically start a session as a certain user.
+        autologinUser = "tux";
+
+        # Simultaneously open a Hyprland session on tty1 and an X11 instance on TTY2.
+        autostart.tty1 = "hyprland";
+        autostart.tty2 = "startx";
+    };
+}
+```
+
+Note that if an autostart program is configured for a TTY but autologinUser is not set, the TTY will display the standard shell login prompt and start the configured autostart program for any user after they log in. If you are confused about why this is a feature, it was originally created for one very specific use case. See the `pos.steam` module section for more information.
+
 #### grub
 When `pos.grub.enable = true` is set, a full working configuration for the Grub bootloader will be enabled, complete with os-prober scanning. By default it will use EFI mode and autodetect the boot device, but it can be changed to BIOS mode by setting `pos.grub.device` to the drive you would like to use as the boot device.
 
@@ -62,9 +79,11 @@ When `pos.sddm.enable = true` is set, the SDDM display manager will be installed
 When `pos.hypr.enable = true` is set, the Hyprland tiling window manager will be installed and made selectable as a session by display managers. Since actual configuration of Hyprland happens on the user end, you will also need to enable the corresponding home-manager submodule to make full use of this.
 
 #### steam
-When `pos.steam.enable = true` is set, several things will happen. Firstly, the Steam client will be installed and firewall ports will be opened for remote play and local network transfers. More significantly, it will give you access to a new command, `startgs`, which can be used in a TTY to start Gamescope as a standalone X11 session. In simple terms, this is essentially running Big Picture Mode as a minimal desktop environment, similarly to what the Steam Deck does. In addition to providing a console-like interface, it also enables certain extended compatibility features for running Windows applications, such as HDR support for Steam games running through Proton.
+When `pos.steam.enable = true` is set, several things will happen. Firstly, the Steam client will be installed and firewall ports will be opened for remote play and local network transfers. More significantly, it will give you access to a new command, `startgs`, which can be used in a TTY to start Gamescope as a standalone X11 session. In simple terms, this is essentially running Big Picture Mode as a minimal desktop environment.
 
-There are also some other miscellaneous configurations designed to improve gaming experience on NixOS, such as configuring drivers and kernel modules to support wireless Xbox controllers.
+In addition to providing a console-like interface, it also enables certain extended compatibility features for running Windows applications, such as HDR support for Steam games running through Proton. There are also some other miscellaneous configurations designed to improve gaming experience on NixOS, such as configuring drivers and kernel modules to support wireless Xbox controllers.
+
+As a general tip, `startgs` can also be started automatically using `pos.sessions.autostart`, resulting in a complete console experience. Additionally, you run this simultaneously with a more traditional desktop environment on a different TTY, allowing you to switch back and forth between "Desktop Mode" and "Console Mode" similarly to a Steam Deck or other official Valve hardware running SteamOS. In fact, this is the original reason the `pos.sessions` interface was added to begin with. See the puddingOS core module section above for more details on how to do this.
 
 #### godot
 When `pos.godot.enable = true`, the only thing that will happen by default is that the latest version of the Godot game engine will be installed. The stable Nix package for Godot is often slow to receive updates, so using this module will ensure that it is updated up to the current minor version (i.e. 4.1 -> 4.2 but not necessarily 4.1.0 -> 4.1.1).

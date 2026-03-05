@@ -16,6 +16,7 @@ in {
         ./grub.nix
         ./godot.nix
         ./steam.nix
+        ./sessions.nix
     ];
 
     # Configuration for toggling puddingOS and other submodules.
