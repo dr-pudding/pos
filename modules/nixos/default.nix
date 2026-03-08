@@ -40,6 +40,7 @@ in {
         "${catppuccin}/modules/nixos"
         ./sessions.nix
         ./grub
+        ./limine
         ./godot
         ./steam
     ];

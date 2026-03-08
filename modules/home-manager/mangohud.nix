@@ -64,7 +64,7 @@ with lib; {
 
                 # Minecraft-adjacent keybind.
                 toggle_hud = "F3";
-                no_display = true;
+                #no_display = true;
             };
         };
     };
