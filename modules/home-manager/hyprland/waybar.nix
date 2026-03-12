@@ -4,7 +4,7 @@
     ...
 }:
 with lib; {
-    config = mkIf (config.pos.hypr.enable
+    config = mkIf (config.pos.hyprland.enable
         && config.pos.enable) {
         # Top status bar.
         programs.waybar = {

@@ -7,7 +7,7 @@ You will need a working installation of NixOS if you do not have one already. Pl
 - A primary user with sudo access.
 - An internet connection.
 
-Once these conditions are met, you can install and configure puddingOS on top of your existing system. There are two primary modules, a NixOS module (which can only run on NixOS systems) and a home-manager module (which can theoretically run on any system with a standalone home-manager setup). They can be installed simultaneously or individually.
+Once these conditions are met, you can install and configure puddingOS on top of your existing system. There are two primary modules: a NixOS module (which can only run on NixOS systems) and a Home Manager module (which can be run on any system capable of using the Nix package manager). They can be installed simultaneously or individually.
 
 ### Stable Nix Installation
 ```nix
@@ -96,6 +96,8 @@ Additionally, you can optionally set `pos.godot.remoteDebug.enable = true` to op
 #### pos core
 When `pos.enable = true` is set, nothing will happen by default. It is only used to toggle the rest of the submodules at once.
 
+The core module also provides a set of general command-line utilities that don't rely on any other modules. For now, there is only one, the `rng` command, which can be used to quickly generate numbers in a range or pick an item from a list. All of these utilities have extended documentation via the `--help` argument, but they aren't really complicated enough to need their own manual pages.
+
 #### shell + shell.rgr
 When `pos.shell.enable = true` is set, the fish shell will be enabled and set as the default for that user. Several other shell features will be enabled aswell, such as a new command history system, improved core utilities, password management, and more. It also installs a terminal emulator, Alacritty, which can be used to interact with the shell in graphical sessions.
 
@@ -134,3 +136,5 @@ When `pos.qb.enable = true` is set, qutebrowser will be installed. It will also 
 
 #### mangohud
 When `pos.mangohud.enable = true` is set, MangoHud will be installed and enabled session wide for that user. This means it will be automatically enabled for all applicable programs, but it will be hidden by default. The mode cycle keybind has been replaced with a single on-off toggle with `F3`, which is meant to reflect the behaviour of the Minecraft debug menu which serves a similar purpose.
+
+As of now, the session-wide autostart does not work in the Gamescope session created by the Steam submodule. Fixing this is relatively high priority since it's one of the main use cases for MangoHud, but in the meantime you can still use MangoHud the normal way by setting the variables in the launch options.

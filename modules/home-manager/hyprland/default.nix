@@ -7,7 +7,7 @@
 with lib; {
     imports = [./waybar.nix];
 
-    options.pos.hypr = {
+    options.pos.hyprland = {
         enable = mkOption {
             type = types.bool;
             default = false;
@@ -15,7 +15,7 @@ with lib; {
         };
     };
 
-    config = mkIf (config.pos.hypr.enable
+    config = mkIf (config.pos.hyprland.enable
         && config.pos.enable) {
         wayland.windowManager.hyprland = {
             enable = true;
@@ -33,6 +33,7 @@ with lib; {
                 bind = [
                     # Quick-launch applications.
                     "$mod, T, exec, alacritty" # Terminal emulator shortcut.
+                    "$mod, E, exec, alacritty -e fish -c \"rcd; exec fish\"" # File explorer shortcut.
                     "$mod, B, exec, qutebrowser" # Browser shortcut.
 
                     # Quick-launch utilities.

@@ -8,26 +8,9 @@
 
     # Create a package for the pos CLI utility.
     pythonWithPackages = pkgs.python3.withPackages (ps: [ps.click]);
-    pos-cmd = pkgs.stdenv.mkDerivation {
-        name = "pos";
-        src = ./.;
-        buildInputs = [pythonWithPackages];
-        nativeBuildInputs = [pkgs.makeWrapper];
-        installPhase = ''
-            # Copy Python module.
-            mkdir -p $out/bin $out/lib/pos
-            cp pos_cmd.py $out/lib/pos/
-
-            # Create wrapper for the pos command.
-            cat > $out/bin/pos << EOF
-            #!${pythonWithPackages}/bin/python3
-            import sys
-            sys.path.insert(0, "$out/lib/pos")
-            exec(open("$out/lib/pos/pos_cmd.py").read())
-            EOF
-            chmod +x $out/bin/pos
-        '';
-    };
+    pos-cmd = pkgs.writers.writePython3Bin "pos" {
+        libraries = [pkgs.python3Packages.click];
+    } (builtins.readFile ./pos_cmd.py);
 
     # Install styling library for various applications.
     catppuccin = builtins.fetchTarball {
