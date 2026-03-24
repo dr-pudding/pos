@@ -4,15 +4,14 @@
     lib,
     ...
 }:
-with lib;
-let
+with lib; let
     nixvim = import (builtins.fetchTarball {
         url = "https://github.com/nix-community/nixvim/archive/nixos-25.11.tar.gz";
         sha256 = "1v4gghvjrzj7kwzvwgwjbhbiavwzbc5ncwjicc1jgjwdmbdaqhw7";
     });
 in {
-    imports = [ nixvim.homeManagerModules.nixvim ];
-    
+    imports = [nixvim.homeManagerModules.nixvim];
+
     options.pos.vi = {
         enable = mkOption {
             type = types.bool;
@@ -23,7 +22,6 @@ in {
 
     config = mkIf (config.pos.vi.enable
         && config.pos.enable) {
-
         programs.nixvim = {
             enable = true;
             defaultEditor = true;
@@ -264,6 +262,26 @@ in {
                             else
                                 builtin.live_grep()
                             end
+                        end
+                    '';
+                }
+
+                # Replace last search pattern (reuses last search).
+                {
+                    key = "<leader>r";
+                    mode = "n";
+                    options.desc = "Replace last search pattern.";
+                    action = ":%s//";
+                }
+
+                # Find and replace.
+                {
+                    key = "<leader>R";
+                    mode = "n";
+                    options.desc = "Find and replace.";
+                    action.__raw = ''
+                        function()
+                            vim.fn.feedkeys(":%s/", "n")
                         end
                     '';
                 }
