@@ -4,7 +4,25 @@
     lib,
     ...
 }:
-with lib; {
+with lib; let
+    # Universal copy utility (currently supports wl-copy and osc52 over SSH).
+    copy = pkgs.writers.writeBashBin "copy" ''
+        input=$(cat)
+        if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+          printf '\033]52;c;%s\007' "$(echo -n "$input" | base64)"
+        elif [ -n "$WAYLAND_DISPLAY" ]; then
+          echo -n "$input" | ${pkgs.wl-clipboard}/bin/wl-copy
+        else
+          echo "copy: no supported clipboard method detected" >&2
+          exit 1
+        fi
+    '';
+
+    # Simple randomizer utility.
+    rng = pkgs.writers.writePython3Bin "rng" {
+        libraries = [pkgs.python3Packages.click];
+    } (builtins.readFile ./rng.py);
+in {
     imports = [./rgr.nix];
 
     options.pos.shell = {
@@ -80,8 +98,13 @@ with lib; {
             pinentry.package = pkgs.pinentry-tty;
         };
 
-        # Clipboard manager (also required by pass).
-        home.packages = [pkgs.wl-clipboard];
+        home.packages = [
+            pkgs.wl-clipboard # Wayland clipboard manager (also required by pass).
+
+            # Custom utilities.
+            copy
+            rng
+        ];
         services.cliphist = {
             enable = true;
             allowImages = true;
@@ -117,6 +140,7 @@ with lib; {
                     size = 12;
                     normal.family = "OverpassM Nerd Font";
                 };
+                terminal.osc52 = "CopyPaste"; # Allows copy over SSH.
             };
         };
         catppuccin.alacritty.enable = true;

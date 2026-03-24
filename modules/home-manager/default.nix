@@ -8,9 +8,6 @@
         url = "https://github.com/catppuccin/nix/archive/release-25.11.tar.gz";
         sha256 = "0p9v37l8fvm15ziig45ragqfk581584mgl425v1nkqrnkafzl8i3";
     };
-    rng = pkgs.writers.writePython3Bin "rng" {
-        libraries = [pkgs.python3Packages.click];
-    } (builtins.readFile ./rng.py);
 in {
     # Import dependencies and submodules.
     imports = [
@@ -34,8 +31,6 @@ in {
                 flavor = "macchiato";
                 accent = "lavender";
             };
-
-            home.packages = [rng];
         })
     ];
 }
