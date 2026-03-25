@@ -7,7 +7,7 @@
     cfg = config.pos;
 
     # Create a package for the pos CLI utility.
-    pythonWithPackages = pkgs.python3.withPackages (ps: [ps.click]);
+    # pythonWithPackages = pkgs.python3.withPackages (ps: [ps.click]);
     pos-cmd = pkgs.writers.writePython3Bin "pos" {
         libraries = [pkgs.python3Packages.click];
     } (builtins.readFile ./pos_cmd.py);
@@ -18,6 +18,29 @@
         sha256 = "0p9v37l8fvm15ziig45ragqfk581584mgl425v1nkqrnkafzl8i3";
     };
 in {
+    # Configuration for toggling puddingOS and other submodules.
+    options.pos = {
+        enable = lib.mkOption {
+            type = lib.types.bool;
+            default = false;
+            description = "Enable puddingOS core module with basic drivers and more.";
+        };
+
+        sddm.enable = lib.mkOption {
+            type = lib.types.bool;
+            default = false;
+            description = "Enable display manager and login greeter. \
+            Takes priority over the `pos.sessions.autostart.tty1` option.";
+        };
+
+        hyprland.enable = lib.mkOption {
+            type = lib.types.bool;
+            default = false;
+            description = "Enable window manager and desktop environment. \
+            Intended to be used with its corresponding Home Manager module.";
+        };
+    };
+
     # Import dependencies and submodules.
     imports = [
         "${catppuccin}/modules/nixos"
@@ -27,23 +50,6 @@ in {
         ./godot
         ./steam
     ];
-
-    # Configuration for toggling puddingOS and other submodules.
-    options.pos = {
-        enable = lib.mkEnableOption "Enable puddingOS core module and most submodules.";
-
-        sddm.enable = lib.mkOption {
-            type = lib.types.bool;
-            default = false;
-            description = "Enable display manager and login greeter.";
-        };
-
-        hypr.enable = lib.mkOption {
-            type = lib.types.bool;
-            default = false;
-            description = "Enable window manager and desktop environment.";
-        };
-    };
 
     config = lib.mkMerge [
         # Core module (base configuration).
@@ -89,7 +95,7 @@ in {
         })
 
         # Hyprland module (desktop environment).
-        (lib.mkIf (cfg.hypr.enable && cfg.enable) {
+        (lib.mkIf (cfg.hyprland.enable && cfg.enable) {
             programs.hyprland = {
                 enable = true;
                 xwayland.enable = true;

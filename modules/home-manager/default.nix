@@ -1,5 +1,4 @@
 {
-    pkgs,
     lib,
     config,
     ...
@@ -12,16 +11,21 @@ in {
     # Import dependencies and submodules.
     imports = [
         (catppuccin + "/modules/home-manager")
-        ./mangohud.nix
-        ./qb.nix
         ./hyprland
+        ./mangohud
+        ./qb
+
         ./shell
         ./vi
     ];
 
     # Configuration for toggling puddingOS and other submodules.
     options.pos = {
-        enable = lib.mkEnableOption "Enable puddingOS core module and most submodules.";
+        enable = lib.mkOption {
+            type = lib.types.bool;
+            default = false;
+            description = "Enable puddingOS core module for Home Manager.";
+        };
     };
 
     config = lib.mkMerge [

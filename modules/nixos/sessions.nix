@@ -30,7 +30,8 @@ in {
         autologinUser = mkOption {
             type = types.str;
             default = "";
-            description = "Bypass password login to set a default user for all TTYs.";
+            example = "tux";
+            description = "Skip password login to set a default user for all TTYs.";
         };
         autostart = mkOption {
             type = types.attrsOf types.str;

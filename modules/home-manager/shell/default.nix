@@ -5,25 +5,15 @@
     ...
 }:
 with lib; let
-    # Universal copy utility (currently supports wl-copy and osc52 over SSH).
-    copy = pkgs.writers.writeBashBin "copy" ''
-        input=$(cat)
-        if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
-          printf '\033]52;c;%s\007' "$(echo -n "$input" | base64)"
-        elif [ -n "$WAYLAND_DISPLAY" ]; then
-          echo -n "$input" | ${pkgs.wl-clipboard}/bin/wl-copy
-        else
-          echo "copy: no supported clipboard method detected" >&2
-          exit 1
-        fi
-    '';
-
     # Simple randomizer utility.
     rng = pkgs.writers.writePython3Bin "rng" {
         libraries = [pkgs.python3Packages.click];
     } (builtins.readFile ./rng.py);
 in {
-    imports = [./rgr.nix];
+    imports = [
+        ./rgr
+        ./clipboard
+    ];
 
     options.pos.shell = {
         enable = mkOption {
@@ -46,6 +36,9 @@ in {
                 # but if you enabled this shell module then you probably aren't using it.
                 # If you need both anyway, you can override this by using mkForce.
                 nsh = "nix-shell";
+
+                # Open another terminal window in the current directory.
+                dupe = "alacritty & disown";
             };
 
             interactiveShellInit = ''
@@ -98,26 +91,6 @@ in {
             pinentry.package = pkgs.pinentry-tty;
         };
 
-        home.packages = [
-            pkgs.wl-clipboard # Wayland clipboard manager (also required by pass).
-
-            # Custom utilities.
-            copy
-            rng
-        ];
-        services.cliphist = {
-            enable = true;
-            allowImages = true;
-            systemdTargets = ["config.wayland.systemd.target"];
-
-            extraOptions = [
-                "-max-dedupe-search"
-                "10"
-                "-max-items"
-                "500"
-            ];
-        };
-
         # Improved cat command and pager.
         programs.bat.enable = true;
         programs.fish.shellAliases.cat = "bat -pp";
@@ -144,5 +117,7 @@ in {
             };
         };
         catppuccin.alacritty.enable = true;
+
+        home.packages = [rng];
     };
 }

@@ -17,7 +17,7 @@ in {
             type = types.str;
             default = "nodev";
             example = "/dev/sda";
-            description = mdDoc ''
+            description = ''
                 Boot device for GRUB installation.
                 - `nodev`: EFI mode (default)
                 - `/dev/xxx`: BIOS mode, install GRUB to specified device.

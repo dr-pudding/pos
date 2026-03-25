@@ -26,6 +26,8 @@ in {
             enable = true;
             defaultEditor = true;
 
+            keymaps = import ./keymaps.nix;
+
             # Run from the terminal using vi, vim, or nvim.
             viAlias = true;
             vimAlias = true;
@@ -193,99 +195,6 @@ in {
                     };
                 };
             };
-
-            keymaps = [
-                # Open diagnostic window for hovered item.
-                {
-                    key = "<F1>";
-                    mode = ["n" "i" "v"];
-                    action = "<ESC>:lua vim.diagnostic.open_float()<CR>";
-                }
-
-                # Open refactoring prompt for hovered item.
-                {
-                    key = "<F2>";
-                    mode = ["n" "i" "v"];
-                    action = "<ESC>:lua vim.lsp.buf.rename()<CR>";
-                }
-
-                # Toggle search highlight.
-                {
-                    key = "<F3>";
-                    mode = ["n" "i" "v"];
-                    action = "<ESC>:set hlsearch!<CR>";
-                }
-
-                # List open buffers with telescope.
-                {
-                    key = "`";
-                    mode = "n";
-                    action = "<cmd>Telescope buffers<cr>";
-                    options.desc = "List buffers.";
-                }
-
-                # Git-aware file search with telescope.
-                {
-                    key = "~";
-                    mode = "n";
-                    options.desc = "Find files (git-aware).";
-                    action.__raw = ''
-                        function()
-                            -- If this is a Git repository, search git files.
-                            local ok = pcall(require('telescope.builtin').git_files, {})
-
-                            -- Otherwise, recursively search the current directory.
-                            if not ok then
-                                require('telescope.builtin').find_files()
-                            end
-                        end
-                    '';
-                }
-
-                # Git-aware live grep with telescope.
-                {
-                    key = "?";
-                    mode = "n";
-                    options.desc = "Live grep (git-aware).";
-                    action.__raw = ''
-                        function()
-                            local builtin = require('telescope.builtin')
-                            local git_cmd = "git rev-parse --is-inside-work-tree 2>/dev/null"
-                            local is_git = vim.fn.system(git_cmd):match('true')
-
-                            -- If this is a Git repository, search git files.
-                            if is_git then
-                                local git_root = vim.fn.systemlist('git rev-parse --show-toplevel')[1]
-                                builtin.live_grep({ cwd = git_root })
-
-                            -- Otherwise, recursively search the current directory.
-                            else
-                                builtin.live_grep()
-                            end
-                        end
-                    '';
-                }
-
-                # Replace last search pattern (reuses last search).
-                {
-                    key = "<leader>r";
-                    mode = "n";
-                    options.desc = "Replace last search pattern.";
-                    action = ":%s//";
-                }
-
-                # Find and replace.
-                {
-                    key = "<leader>R";
-                    mode = "n";
-                    options.desc = "Find and replace.";
-                    action.__raw = ''
-                        function()
-                            vim.fn.feedkeys(":%s/", "n")
-                        end
-                    '';
-                }
-            ];
 
             # Some miscellaneous configuration options.
             opts = {
