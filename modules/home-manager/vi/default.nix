@@ -259,6 +259,8 @@ in {
                 pyright # Nix language server
                 ruff # Python language formatter
                 gdtoolkit_4 # For GDScript support
+                ripgrep # Used by Telescope for live grep.
+                nodejs # Required for certain web development features.
                 #gcc # For building native extensions
                 #gnumake # For building native extensions
             ];
@@ -266,9 +268,6 @@ in {
 
         # Define an extra alias for elevated editing while retaining userspace configurations.
         programs.fish.shellAliases.svi = "sudo -E nvim";
-
-        # Package used by Telescope for live grep.
-        #home.packages = with pkgs; [ripgrep];
 
         # Configure the nix language formatter to use four-space indentation.
         xdg.configFile."alejandra.toml".text = ''
