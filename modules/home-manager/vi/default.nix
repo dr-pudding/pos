@@ -47,7 +47,6 @@ in {
 
             plugins = {
                 telescope.enable = true; # Fuzzy search utility for file names and content.
-                typescript-tools.enable = true; # Language server for TypeScript.
                 web-devicons.enable = true; # Provides file-type icons.
 
                 # Language Server Protocol (LSP) integrations for various languages.
@@ -57,8 +56,27 @@ in {
                     servers.jdtls.enable = true; # Java
 
                     servers.nil_ls.enable = true; # Nix language
-                    servers.vue_ls.enable = true; # Vue framework
                     servers.markdown_oxide.enable = true; # Markdown
+
+                    # TypeScript/JavaScript language with support for Vue/etc.
+                    servers.ts_ls = {
+                        enable = true;
+                        filetypes = [
+                            "javascript"
+                            "javascriptreact"
+                            "javascript.jsx"
+                            "typescript"
+                            "typescriptreact"
+                            "typescript.tsx"
+                            "vue"
+                        ];
+                    };
+
+                    # Vue framework
+                    servers.vue_ls = {
+                        enable = true;
+                        extraOptions.init_options.typescript.tsdk = "${pkgs.typescript}/lib/node_modules/typescript/lib";
+                    };
 
                     # Godot Engine scripting language
                     servers.gdscript = {
@@ -102,6 +120,10 @@ in {
 
                         # Use special options for certain formatters.
                         formatters = {
+                            prettier = {
+                                command = "${pkgs.nodePackages.prettier}/bin/prettier";
+                            };
+
                             alejandra_format = {
                                 command = "alejandra";
                                 args = [
@@ -261,6 +283,8 @@ in {
                 gdtoolkit_4 # For GDScript support
                 ripgrep # Used by Telescope for live grep.
                 nodejs # Required for certain web development features.
+                typescript # Used by JavaScript/Typescript plugins.
+                vue-language-server # Provides @vue/typescript-plugin for ts_ls.
                 #gcc # For building native extensions
                 #gnumake # For building native extensions
             ];
