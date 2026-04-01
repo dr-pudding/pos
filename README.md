@@ -36,6 +36,8 @@ in {
 
 ## Submodule Configuration
 
+> NOTE: I am currently working on a more complete and readable documentation page. I apologize for this section being difficult to read, but it will be replaced soon.
+
 In order to be accommodating to the needs of multiple different systems, puddingOS is composed of several submodules that can be enabled and configured separately from one another. For example:
 
 ```nix
@@ -50,11 +52,9 @@ This would allow you to automatically install and configure a working Grub setup
 
 Note that `pos.enable = true` must also be set as a prerequisite, or `pos.grub.enable = true` will have no effect. This logic holds true for the entire tree of submodules. If a parent module is disabled, all of its child submodules will be disabled as well.
 
-### NixOS submodules
-
-> NOTE: I am currently working on a more complete and readable documentation page. I apologize for this section being difficult to read, but it will be replaced soon.
-
 The following sections list all puddingOS submodules and their configuration options. Remember that puddingOS itself is composed of a NixOS module and a home-manager module, so their submodules are separate as well.
+
+### NixOS submodules
 
 #### pos core
 
