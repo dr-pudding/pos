@@ -52,9 +52,9 @@ Note that `pos.enable = true` must also be set as a prerequisite, or `pos.grub.e
 
 ### NixOS submodules
 
-The following sections list all puddingOS submodules and their configuration options. Remember that puddingOS itself is composed of a NixOS module and a home-manager module, so their submodules are separate as well.
-
 > NOTE: I am currently working on a more complete and readable documentation page. I apologize for this section being difficult to read, but it will be replaced soon.
+
+The following sections list all puddingOS submodules and their configuration options. Remember that puddingOS itself is composed of a NixOS module and a home-manager module, so their submodules are separate as well.
 
 #### pos core
 
