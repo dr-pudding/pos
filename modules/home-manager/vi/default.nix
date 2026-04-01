@@ -122,6 +122,7 @@ in {
                         formatters = {
                             prettier = {
                                 command = "${pkgs.nodePackages.prettier}/bin/prettier";
+                                args = ["--tab-width" "4" "--stdin-filepath" "$FILENAME"];
                             };
 
                             alejandra_format = {
