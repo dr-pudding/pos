@@ -1,7 +1,5 @@
 # puddingOS: a high-level configuration layer for NixOS and Home Manager
 
-The full documentation for this project can be found at [dr-pudding.github.io/pos](https://dr-pudding.github.io/pos).
-
 ## What even is this?
 
 This project started as simply a repository to store my own Nix configurations which I made public in order to make cloning easier, and that is still one of its primary purposes. However, I eventually realized that I needed the system to be more modular/decoupled due to the fact that I was using it on several different types of machines with very different needs and purposes.
@@ -78,3 +76,7 @@ home-manager.users.USERNAME.imports = [ /home/USERNAME/.pos/modules/home-manager
 ### Flakes Installation
 
 Flakes is not yet officially supported (i.e. I haven't made a flake.nix yet), but it is a high priority change that should be made relatively soon. In the meantime, you can still use the modules as inputs the way you normally would if you already have a Flakes-based system.
+
+## Usage
+
+Extensive guides for configuring and using the various features of puddingOS can be found in the [full documentation].
