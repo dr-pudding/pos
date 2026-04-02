@@ -37,6 +37,17 @@ jobs:
               with:
                   path: result/book
 
+            - name: Delete previous artifacts
+              uses: geekyeggo/delete-artifact@v5
+              with:
+                  name: github-pages
+                  failOnError: false
+
+            - name: Upload pages artifact
+              uses: actions/upload-pages-artifact@v3
+              with:
+                  path: result/book
+
             - name: Deploy to GitHub Pages
               id: deployment
               uses: actions/deploy-pages@v4
