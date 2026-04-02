@@ -7,7 +7,6 @@
     cfg = config.pos;
 
     # Create a package for the pos CLI utility.
-    # pythonWithPackages = pkgs.python3.withPackages (ps: [ps.click]);
     pos-cmd = pkgs.writers.writePython3Bin "pos" {
         libraries = [pkgs.python3Packages.click];
     } (builtins.readFile ./pos_cmd.py);
@@ -29,15 +28,13 @@ in {
         sddm.enable = lib.mkOption {
             type = lib.types.bool;
             default = false;
-            description = "Enable display manager and login greeter. \
-            Takes priority over the `pos.sessions.autostart.tty1` option.";
+            description = "Enable display manager and login greeter.";
         };
 
         hyprland.enable = lib.mkOption {
             type = lib.types.bool;
             default = false;
-            description = "Enable window manager and desktop environment. \
-            Intended to be used with its corresponding Home Manager module.";
+            description = "Enable window manager and desktop environment.";
         };
     };
 

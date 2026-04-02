@@ -1,17 +1,41 @@
-# puddingOS
+# puddingOS: a high-level configuration layer for NixOS and Home Manager
 
-A modular set of Nix configurations containing an all-in-one OS and desktop environment. These are basically just my dotfiles that I made public because it makes working with flakes a bit easier, but for the sake of good practice I decided to organize them in such a way that anyone can install and use different parts of it depending on their exact needs.
+## What even is this?
+
+This project started as simply a repository to store my own Nix configurations which I made public in order to make cloning easier, and that is still one of its primary purposes. However, I eventually realized that I needed the system to be more modular/decoupled due to the fact that I was using it on several different types of machines with very different needs and purposes.
+
+Also, I had spent a lot of time writing simple scripts and CLI tools for my own use that were genuinely helpful, such as a unified clipboard manager that works across both Wayland and X11 sesssions, as well as over SSH/Telnet connections. I wanted a way of bundling these tools with my Nix configurations so that they would be installed alongside them, without actually needing to apply the entire configuration setup just to use them.
+
+The current iteration of puddingOS is structured as a set of mostly independent submodules. The syntax is designed to be consistent with common Nix module syntax:
+
+```nix
+pos.enable = true;
+pos.grub.enable = true;
+pos.grub.device = "/dev/sda";
+```
+
+The configurations above would fully install and enable the Grub bootloader on a NixOS system with puddingOS-specific customization options. Since `pos.grub.device` is set, it will use legacy BIOS boot mode instead of EFI.
+
+## Should I use this?
+
+The short answer is no, probably not. But certain parts of it might be useful to you if you are looking for something specific that happens to be covered by this project's scope. You might be interested in puddingOS if you care about any of these things:
+
+- A complete starter Neovim environment for development.
+- An option to log in to an isolated Gamescope session, i.e. "Boot to Steam Deck" behaviour that allows hot-swapping between Console Mode and Desktop Mode on the same machine.
+- Several custom shell utilities for system maintenance, clipboard management, data synchronization, and more.
+- Quick installation and fleshed-out starter configurations for any of the specific programs that are configurable through other puddingOS submodules.
+
+Ultimately, my primary goal is to formalize my own configurations more so than it is to provide a public Nix module. So any features and support this project gets will be heavily biased towards my exact needs. But if any of those needs happen to overlap with your own, then you might benefit from puddingOS.
 
 ## Installation
 
-You will need a working installation of NixOS if you do not have one already. Please see the [NixOS Installation Guide](https://nixos.wiki/wiki/NixOS_Installation_Guide) if you need help. Just make sure your installation has:
+There are several routes to installing puddingOS on your system depending on what you need. The first thing to understand is that it is composed of two independent parts: a NixOS module and a Home Manager module. The Home Manager module is treated as the default for most configurations, with the NixOS module only being used whenever system-level configuration is absolutely necessary (such as with the Grub and Limine submodules).
 
-- A primary user with sudo access.
-- An internet connection.
-
-Once these conditions are met, you can install and configure puddingOS on top of your existing system. There are two primary modules: a NixOS module (which can only run on NixOS systems) and a Home Manager module (which can be run on any system capable of using the Nix package manager). They can be installed simultaneously or individually.
+The Home Manager module can be installed on any Linux system that supports the Nix package manager, provided you are able to use it to install the standalone version of Home Manager. In theory it should work with nix-darwin as well, but this has not been tested. If you want to use the system-level NixOS module, you will need a machine that is actively running NixOS.
 
 ### Stable Nix Installation
+
+You can install and import one or both modules into your existing Nix configurations:
 
 ```nix
 { ... }: let
@@ -34,127 +58,25 @@ in {
 }
 ```
 
-## Submodule Configuration
+#### Local Clone Import
 
-> NOTE: I am currently working on a more complete and readable documentation page. I apologize for this section being difficult to read, but it will be replaced soon.
+The configuration above is written with the assumption that you are are purely a user and are not making any changes to the puddingOS configuration directly. If you want to develop/modify puddingOS (beyond just overriding it from your own configurations), you will need to clone the repository manually:
 
-In order to be accommodating to the needs of multiple different systems, puddingOS is composed of several submodules that can be enabled and configured separately from one another. For example:
-
-```nix
-{
-    pos.enable = true;
-    pos.grub.enable = true;
-    pos.grub.device = "/dev/sda";
-};
+```sh
+git clone https://github.com/dr-pudding/pos /home/USERNAME/.pos
 ```
 
-This would allow you to automatically install and configure a working Grub setup. Many submodules, such as this one, have additional configuration options. For example, setting `pos.grub.device` will change from EFI to BIOS boot mode, and use the value as the boot device.
-
-Note that `pos.enable = true` must also be set as a prerequisite, or `pos.grub.enable = true` will have no effect. This logic holds true for the entire tree of submodules. If a parent module is disabled, all of its child submodules will be disabled as well.
-
-The following sections list all puddingOS submodules and their configuration options. Remember that puddingOS itself is composed of a NixOS module and a home-manager module, so their submodules are separate as well.
-
-### NixOS submodules
-
-#### pos core
-
-When `pos.enable = true` is set, a few things will be enabled by default. This includes basic audio/video drivers, Catppuccin color setup, font packages, etc.
-
-The core module also provides an interface for autostarting sessions on one or multiple TTYs. Most users are probably better off just using a display manager to handle this, but this might be useful if you want to automatically start multiple sessions at once:
+and then import the modules directly from their local paths rather than URLs:
 
 ```nix
-{
-    pos.sessions = {
-        # Skip password login and automatically start a session as a certain user.
-        autologinUser = "tux";
-
-        # Simultaneously open a Hyprland session on tty1 and an X11 instance on TTY2.
-        autostart.tty1 = "hyprland";
-        autostart.tty2 = "startx";
-
-        # This can continue for tty3, tty4, etc...
-    };
-}
+imports = [ /home/USERNAME/.pos/modules/nixos ];
+home-manager.users.USERNAME.imports = [ /home/USERNAME/.pos/modules/home-manager ];
 ```
 
-Note that if an autostart program is configured for a TTY but autologinUser is not set, the TTY will display the standard shell login prompt and start the configured autostart program for any user after they log in. If you are confused about why this is a feature, it was originally created for one very specific use case. See the `pos.steam` module section for more information.
+### Flakes Installation
 
-#### grub
+Flakes is not yet officially supported (i.e. I haven't made a flake.nix yet), but it is a high priority change that should be made relatively soon. In the meantime, you can still use the modules as inputs the way you normally would if you already have a Flakes-based system.
 
-When `pos.grub.enable = true` is set, a full working configuration for the Grub bootloader will be enabled, complete with os-prober scanning. By default it will use EFI mode and autodetect the boot device, but it can be changed to BIOS mode by setting `pos.grub.device` to the drive you would like to use as the boot device.
+## Full Documentation
 
-#### sddm
-
-When `pos.sddm.enable = true` is set, the SDDM display manager will be installed and started on boot. Keep in mind that enabling the SDDM service will automatically start the greeter in TTY1. This will take priority over any program defined by `pos.sessions.autostart.tty1`. You probably don't want to use these two different methods of session management together anyway because it would be redundant to do so. If you insist, I would recommend overriding or disabling this module and configuring SDDM manually.
-
-#### hypr
-
-When `pos.hypr.enable = true` is set, the Hyprland tiling window manager will be installed and made selectable as a session by display managers. Since actual configuration of Hyprland happens on the user end, you will also need to enable the corresponding home-manager submodule to make full use of this.
-
-#### steam
-
-When `pos.steam.enable = true` is set, several things will happen. Firstly, the Steam client will be installed and firewall ports will be opened for remote play and local network transfers. More significantly, it will give you access to a new command, `startgs`, which can be used in a TTY to start Gamescope as a standalone X11 session. In simple terms, this is essentially running Big Picture Mode as a minimal desktop environment.
-
-In addition to providing a console-like interface, it also enables certain extended compatibility features for running Windows applications, such as HDR support for Steam games running through Proton. There are also some other miscellaneous configurations designed to improve gaming experience on NixOS, such as configuring drivers and kernel modules to support wireless Xbox controllers.
-
-As a general tip, `startgs` can also be started automatically using `pos.sessions.autostart`, resulting in a complete console experience. Additionally, you run this simultaneously with a more traditional desktop environment on a different TTY, allowing you to switch back and forth between "Desktop Mode" and "Console Mode" similarly to a Steam Deck or other official Valve hardware running SteamOS. In fact, this is the original reason the `pos.sessions` interface was added to begin with. See the puddingOS core module section above for more details on how to do this.
-
-#### godot
-
-When `pos.godot.enable = true`, the only thing that will happen by default is that the latest version of the Godot game engine will be installed. The stable Nix package for Godot is often slow to receive updates, so using this module will ensure that it is updated up to the current minor version (i.e. 4.1 -> 4.2 but not necessarily 4.1.0 -> 4.1.1).
-
-Additionally, you can optionally set `pos.godot.remoteDebug.enable = true` to open up firewall ports for remote debugging. By default, these are ports 6007 and 6008 over UDP and TCP. If you want to use a non-default port, you will have to change it in the Godot editor settings and then manually open the firewall ports in your NixOS configuration.
-
-### home-manager submodules
-
-#### pos core
-
-When `pos.enable = true` is set, nothing will happen by default. It is only used to toggle the rest of the submodules at once.
-
-The core module also provides a set of general command-line utilities that don't rely on any other modules. For now, there is only one, the `rng` command, which can be used to quickly generate numbers in a range or pick an item from a list. All of these utilities have extended documentation via the `--help` argument, but they aren't really complicated enough to need their own manual pages.
-
-#### shell + shell.rgr
-
-When `pos.shell.enable = true` is set, the fish shell will be enabled and set as the default for that user. Several other shell features will be enabled aswell, such as a new command history system, improved core utilities, password management, and more. It also installs a terminal emulator, Alacritty, which can be used to interact with the shell in graphical sessions.
-
-When `pos.rgr.enable = true` is set, the ranger file explorer will be installed and made accessible via the `rgr` shell alias. Additionally, it will create a new fish function, `rcd` (ranger + cd), which can be run from the command line as usual. It works identically to the normal ranger command, with one exception: after closing the ranger session, you will return to a shell in whichever directory you left ranger in. In other words, it lets you use ranger to cd into a directory using the interface of a file explorer.
-
-#### vi
-
-When `pos.vi.enable = true` is set, Neovim will be installed and configured using the Nixvim module. This contains a complete starter setup for Neovim, including LSPs for several languages, clipboard integration, autoformatting, and several other features and plugins. Enabling this submodule will also create two fish shell aliases: `vi` which is simply a shortcut for `nvim`, and `svi` which will allow editing with root permissions while still maintaining userspace Neovim configurations.
-
-Keep in mind that text editor configurations are very individualized, and there are a few somewhat opinionated configurations included in this module, such as:
-
-- tab width of 4 spaces
-- autoformat on file write
-- overriden keybinds: `?`, `\``, `~`
-    - The `?` character was formerly used as a backwards search, but this can be achieved by using `N` rather than `n` with a normal search.
-        - Now it is used for live grep, i.e. search in files.
-    - The `\`` character was formerly used for jumping to a set mark. I disabled it because I didn't use the marks system, so this one may not be for everyone.
-        - Now it is used to swap between open files on the current buffer.
-    - The `~` character was formerly used to toggle the case of the highlighted text. For me, this one was useful but not useful enough to warrant that particular keybind. In the future I would like to add a new keybind for case-toggle.
-        - Now it is used to search for a file to open in the current buffer.
-
-If you don't like these settings but still want to use this submodule, you can always override them in your own Nix configurations. Note that both the live grep and file search are specially configured to be Git-aware. If you press `?` or `~` from a Git repository, it will search files within the Git repository. If you press one of these keys from outside of a Git repository, it will search with the current working directory as the root.
-
-#### hypr
-
-When `pos.hypr.enable = true` is set, the main puddingOS "desktop environment" will be enabled. This includes a window management system with Hyprland, status bar, application launcher, screen locker, notification daemon, and tons of other desktop utilities.
-
-Keep in mind that home-manager is only able to provide configuration for Hyprland; installations must be managed on the system side. This means that this module will have no effect without the corresponding NixOS submodule also being enabled.
-
-#### qb
-
-When `pos.qb.enable = true` is set, qutebrowser will be installed. It will also create a fish alias `qb` as a shorcut for launching `qutebrowser` directly. There are a few semi-significant changes from the default settings:
-
-- The `u` and `Ctrl+r` keybindings now bind to the browser back and browser forward, reflecting traditional undo/redo behaviour in Vim.
-    - You can still use the old bindings as well (`H` and `L`).
-    - The `u` key was original bound to opening the last closed tab. This functionality has been moved to `U`, which was previously unbound.
-- JavaScript clipboard access (copy on-click) is now allowed by default.
-- The downloads directory is now `~/stuff/downloads`.
-
-#### mangohud
-
-When `pos.mangohud.enable = true` is set, MangoHud will be installed and enabled session wide for that user. This means it will be automatically enabled for all applicable programs, but it will be hidden by default. The mode cycle keybind has been replaced with a single on-off toggle with `F3`, which is meant to reflect the behaviour of the Minecraft debug menu which serves a similar purpose.
-
-As of now, the session-wide autostart does not work in the Gamescope session created by the Steam submodule. Fixing this is relatively high priority since it's one of the main use cases for MangoHud, but in the meantime you can still use MangoHud the normal way by setting the variables in the launch options.
+> 📖 Full documentation is available at: `[docs link — coming soon]`

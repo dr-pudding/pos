@@ -14,7 +14,7 @@ with lib; {
         remoteDebug.enable = mkOption {
             type = types.bool;
             default = false;
-            description = "Open firewall ports for remote debugging.";
+            description = "Open ports 6007 and 6008 for remote debugging.";
         };
     };
 

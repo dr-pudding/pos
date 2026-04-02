@@ -8,7 +8,7 @@ with lib; {
         enable = mkOption {
             type = types.bool;
             default = false;
-            description = "Enable performance profiler.";
+            description = "Enable performance profiler. Toggle with F3.";
         };
     };
 

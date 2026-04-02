@@ -11,7 +11,7 @@ with lib; {
         enable = mkOption {
             type = types.bool;
             default = false;
-            description = "Enable window manager and other DE features.";
+            description = "Enable window manager and other DE features. Requires the corresponding NixOS module to be enabled.";
         };
     };
 
