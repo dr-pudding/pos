@@ -79,4 +79,4 @@ Flakes is not yet officially supported (i.e. I haven't made a flake.nix yet), bu
 
 ## Usage
 
-Extensive guides for configuring and using the various features of puddingOS can be found in the [full documentation].
+Extensive guides for configuring and using the various features of puddingOS can be found in the [full documentation](https://dr-pudding.github.io/pos).
