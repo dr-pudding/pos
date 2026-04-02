@@ -5,6 +5,7 @@ language = "en"
 src = "src"
 
 [output.html]
+site-url = "https://dr-pudding.github.io/pos"
 git-repository-url = "https://github.com/dr-pudding/pos"
 edit-url-template = "{path}"
 default-theme = "macchiato"
