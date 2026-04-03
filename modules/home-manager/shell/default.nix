@@ -45,7 +45,13 @@ in {
                 set fish_greeting;
             '';
         };
+
+        # Apply Catppuccin colors to shell theme.
+        # You can tell it's working if the username text is teal instead of light green.
         catppuccin.fish.enable = true;
+        home.activation.fishCatppuccinTheme = lib.hm.dag.entryAfter ["writeBoundary"] ''
+            ${pkgs.fish}/bin/fish --no-config -c 'fish_config theme choose "Catppuccin Macchiato"'
+        '';
 
         # Default shell behaviour for fish (see https://nixos.wiki/wiki/Fish).
         programs.bash = {
