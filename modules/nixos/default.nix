@@ -57,7 +57,7 @@ in {
             # OpenGL drivers with legacy support.
             hardware.graphics = {
                 enable = true;
-                enable32Bit = true;
+                enable32Bit = lib.mkIf (pkgs.system == "x86_64-linux") true;
             };
 
             # Pipewire audio drivers with PulseAudio support.
