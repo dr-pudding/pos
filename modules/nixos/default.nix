@@ -51,6 +51,7 @@ in {
     config = lib.mkMerge [
         # Core module (base configuration).
         (lib.mkIf cfg.enable {
+            nix.settings.experimental-features = ["nix-command" "flakes"];
             environment.systemPackages = [pos-cmd];
 
             # OpenGL drivers with legacy support.
