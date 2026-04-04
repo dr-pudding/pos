@@ -1,9 +1,4 @@
 {pkgs, ...}: let
-    agenix = builtins.fetchGit {
-        url = "https://github.com/ryantm/agenix.git";
-        rev = "96e078c646b711aee04b82ba01aefbff87004ded";
-    };
-
     python = pkgs.python3.withPackages (ps: [ps.click]);
     posPkg = pkgs.stdenv.mkDerivation {
         name = "pos";
@@ -25,7 +20,6 @@
 in {
     environment.systemPackages = [
         posPkg
-        (pkgs.callPackage "${agenix}/pkgs/agenix.nix" {})
         pkgs.openssh
     ];
 }
