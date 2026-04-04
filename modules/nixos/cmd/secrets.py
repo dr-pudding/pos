@@ -1,15 +1,15 @@
 import click
 
 from os import environ, path, chdir, makedirs, listdir, remove as os_remove
-from subprocess import run
 from base64 import b64encode
+from static import run_cmd
 
 SECRETS_DIR = "/etc/nixos/pos/secrets"
 
 
 def get_user_keys():
     """Get public keys from the SSH agent."""
-    result = run(["ssh-add", "-L"], capture_output=True, text=True)
+    result = run_cmd("ssh-add -L", silent=True, capture_output=True, text=True)
     if result.returncode != 0 or not result.stdout.strip():
         click.echo(
             "Error: No keys found in SSH agent.\n\n"
@@ -47,7 +47,6 @@ def print_secret_info(name: str, secrets_dir: str):
     """Print the NixOS config snippet for a secret."""
     age_file = path.join(secrets_dir, f"{name}.age")
     click.echo(
-        f"{age_file}\n\n"
         f"Add the following anywhere in your NixOS configuration.\n\n"
         f"age.secrets.{name} = {{\n"
         f"    file = {age_file};\n"
@@ -77,7 +76,8 @@ def secrets(ctx, dir: str):
 def add(ctx, name: str):
     """Create a new secret."""
     secrets_dir = ctx.obj["dir"]
-    run(["sudo", "mkdir", "-p", secrets_dir], check=True)
+    if not path.exists(secrets_dir):
+        run_cmd(f"sudo mkdir -p {secrets_dir}")
     age_file = path.join(secrets_dir, f"{name}.age")
 
     # Ensure the file doesn't exist already.
@@ -96,16 +96,15 @@ def add(ctx, name: str):
     secrets_nix_path = write_temp_secrets_nix(tmp_dir, name, all_keys)
 
     # Generate the secret data.
-    key_bytes = run(
-        ["head", "-c", "32", "/dev/urandom"],
-        capture_output=True,
+    key_bytes = run_cmd(
+        "head -c 32 /dev/urandom", silent=True, capture_output=True
     ).stdout
     encoded = b64encode(key_bytes).decode()
 
     # Create the secret with agenix.
     chdir(tmp_dir)
-    proc = run(
-        ["agenix", "-e", f"{name}.age"],
+    proc = run_cmd(
+        f"agenix -e {name}.age",
         input=encoded,
         text=True,
     )
@@ -117,7 +116,7 @@ def add(ctx, name: str):
 
     # Move the secret file to the correct directory.
     tmp_age = path.join(tmp_dir, f"{name}.age")
-    run(["sudo", "mv", tmp_age, age_file], check=True)
+    run_cmd(f"sudo mv {tmp_age} {age_file}")
 
     # Handle output.
     os_remove(secrets_nix_path)
@@ -142,7 +141,7 @@ def remove(ctx, name: str):
         f"Are you sure you want to delete {name}.age? This cannot be undone.",
         abort=True,
     )
-    run(["sudo", "rm", age_file], check=True)
+    run_cmd(f"sudo rm {age_file}")
 
 
 @secrets.command("list")

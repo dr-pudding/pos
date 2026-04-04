@@ -1,5 +1,6 @@
 import click
 from secrets import secrets
+from static import run_cmd
 
 from os import system as os_system
 
@@ -33,13 +34,6 @@ def rebuild(offline: bool = False):
 def update():
     """Update flake inputs."""
     run_cmd("sudo nix flake update --flake /etc/nixos")
-
-
-@cmd.command()
-def upgrade():
-    """Upgrade the system (update + rebuild)."""
-    update.invoke(ctx=click.Context(update))
-    rebuild.invoke(ctx=click.Context(rebuild))
 
 
 def run_cmd(cmd):
