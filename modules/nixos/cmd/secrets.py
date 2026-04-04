@@ -1,7 +1,7 @@
 import click
+import secrets as secrets_module
 
 from os import environ, path, chdir, makedirs, listdir, remove as os_remove
-from base64 import b64encode
 from static import run_cmd
 
 SECRETS_DIR = "/etc/nixos/pos/secrets"
@@ -96,10 +96,8 @@ def add(ctx, name: str):
     secrets_nix_path = write_temp_secrets_nix(tmp_dir, name, all_keys)
 
     # Generate the secret data.
-    key_bytes = run_cmd(
-        "head -c 32 /dev/urandom", silent=True, capture_output=True
-    ).stdout
-    encoded = b64encode(key_bytes).decode()
+    # token_urlsafe(24) produces exactly 32 URL-safe characters from 24 random bytes.
+    encoded = secrets_module.token_urlsafe(24)
 
     # Create the secret with agenix.
     chdir(tmp_dir)
