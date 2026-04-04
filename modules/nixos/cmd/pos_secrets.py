@@ -1,5 +1,5 @@
 import click
-import secrets as secrets_module
+from secrets import token_urlsafe
 
 from os import environ, path, chdir, makedirs, listdir, remove as os_remove
 from static import run_cmd
@@ -97,7 +97,7 @@ def add(ctx, name: str):
 
     # Generate the secret data.
     # token_urlsafe(24) produces exactly 32 URL-safe characters from 24 random bytes.
-    encoded = secrets_module.token_urlsafe(24)
+    encoded = token_urlsafe(24)
 
     # Create the secret with agenix.
     chdir(tmp_dir)

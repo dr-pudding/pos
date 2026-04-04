@@ -1,5 +1,5 @@
 import click
-from secrets import secrets
+from pos_secrets import secrets
 from static import run_cmd
 
 from os import system as os_system
