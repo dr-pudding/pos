@@ -72,8 +72,15 @@ def secrets(ctx, dir: str):
 
 @secrets.command()
 @click.argument("name")
+@click.option(
+    "--env",
+    "env_keys",
+    multiple=True,
+    metavar="KEY",
+    help="Generate an env file secret with KEY=<value>. Can be repeated for multiple keys.",
+)
 @click.pass_context
-def add(ctx, name: str):
+def add(ctx, name: str, env_keys: tuple):
     """Create a new secret."""
     secrets_dir = ctx.obj["dir"]
     if not path.exists(secrets_dir):
@@ -96,8 +103,12 @@ def add(ctx, name: str):
     secrets_nix_path = write_temp_secrets_nix(tmp_dir, name, all_keys)
 
     # Generate the secret data.
-    # token_urlsafe(24) produces exactly 32 URL-safe characters from 24 random bytes.
-    encoded = token_urlsafe(24)
+    if env_keys:
+        # Env file format: one KEY=value per line, each with its own generated value.
+        encoded = "".join(f"{key}={token_urlsafe(24)}\n" for key in env_keys)
+    else:
+        # token_urlsafe(24) produces exactly 32 URL-safe characters from 24 random bytes.
+        encoded = token_urlsafe(24)
 
     # Create the secret with agenix.
     chdir(tmp_dir)
