@@ -36,6 +36,13 @@ def update():
     run_cmd("sudo nix flake update --flake /etc/nixos")
 
 
+@cmd.command()
+def upgrade():
+    """Upgrade the system (update + rebuild)."""
+    update.invoke(ctx=click.Context(update))
+    rebuild.invoke(ctx=click.Context(rebuild))
+
+
 def run_cmd(cmd):
     """Run a command on the Linux terminal."""
     print(f"> {cmd}")
