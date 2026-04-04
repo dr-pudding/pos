@@ -1,18 +1,20 @@
 import click
+from secrets import secrets
+
 from os import system as os_system
 
 
 @click.group(invoke_without_command=True)
 @click.pass_context
 def cmd(ctx):
-    """puddingOS system management"""
+    """Manage a puddingOS system."""
     if ctx.invoked_subcommand is None:
         click.echo(ctx.get_help())
 
 
-# ================================
-# System version control/rebuilding.
-# ================================
+cmd.add_command(secrets)
+
+
 @cmd.command()
 @click.option(
     "--offline",

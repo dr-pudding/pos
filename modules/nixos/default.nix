@@ -6,11 +6,6 @@
 }: let
     cfg = config.pos;
 
-    # Create a package for the pos CLI utility.
-    pos-cmd = pkgs.writers.writePython3Bin "pos" {
-        libraries = [pkgs.python3Packages.click];
-    } (builtins.readFile ./pos_cmd.py);
-
     # Install styling library for various applications.
     catppuccin = builtins.fetchTarball {
         url = "https://github.com/catppuccin/nix/archive/release-25.11.tar.gz";
@@ -46,13 +41,13 @@ in {
         ./limine
         ./godot
         ./steam
+        ./cmd
     ];
 
     config = lib.mkMerge [
         # Core module (base configuration).
         (lib.mkIf cfg.enable {
             nix.settings.experimental-features = ["nix-command" "flakes"];
-            environment.systemPackages = [pos-cmd];
 
             # OpenGL drivers with legacy support.
             hardware.graphics = {

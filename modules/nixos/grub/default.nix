@@ -3,9 +3,7 @@
     lib,
     ...
 }:
-with lib; let
-    cfg = config.pos.grub;
-in {
+with lib; {
     options.pos.grub = {
         enable = mkOption {
             type = types.bool;
@@ -25,7 +23,7 @@ in {
         };
     };
 
-    config = mkIf (cfg.enable && config.pos.enable) {
+    config = mkIf (config.pos.grub.enable && config.pos.enable) {
         # Configure boot options and menu.
         boot.loader = {
             grub = {
@@ -36,11 +34,11 @@ in {
                 configurationName = "puddingOS";
 
                 # EFI/BIOS configuration based on device option
-                device = cfg.device;
-                efiSupport = cfg.device == "nodev" || cfg.device == "";
+                device = config.pos.grub.device;
+                efiSupport = config.pos.grub.device == "nodev" || config.pos.grub.device == "";
             };
             efi.canTouchEfiVariables =
-                cfg.device == "nodev" || cfg.device == "";
+                config.pos.grub.device == "nodev" || config.pos.grub.device == "";
         };
 
         # Enable silent boot.
