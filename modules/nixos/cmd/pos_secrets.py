@@ -56,32 +56,8 @@ def print_secret_info(name: str, secrets_dir: str):
     )
 
 
-@click.group()
-@click.option(
-    "--dir",
-    default=SECRETS_DIR,
-    show_default=True,
-    help="Override the default directory for storing and reading secrets.",
-)
-@click.pass_context
-def secrets(ctx, dir: str):
-    """Manage secrets with agenix."""
-    ctx.ensure_object(dict)
-    ctx.obj["dir"] = dir
-
-
-@secrets.command()
-@click.argument("name")
-@click.option(
-    "--env",
-    "env_keys",
-    multiple=True,
-    metavar="KEY",
-    help="Generate an env file secret with KEY=<value>. Can be repeated for multiple keys.",
-)
-@click.pass_context
-def add(ctx, name: str, env_keys: tuple):
-    """Create a new secret."""
+def _create_secret(ctx, name: str, encoded: str):
+    """Shared logic for encrypting and storing a secret."""
     secrets_dir = ctx.obj["dir"]
     if not path.exists(secrets_dir):
         run_cmd(f"sudo mkdir -p {secrets_dir}")
@@ -101,14 +77,6 @@ def add(ctx, name: str, env_keys: tuple):
     tmp_dir = path.join(environ.get("XDG_RUNTIME_DIR", "/tmp"), "pos-secrets-tmp")
     makedirs(tmp_dir, exist_ok=True)
     secrets_nix_path = write_temp_secrets_nix(tmp_dir, name, all_keys)
-
-    # Generate the secret data.
-    if env_keys:
-        # Env file format: one KEY=value per line, each with its own generated value.
-        encoded = "".join(f"{key}={token_urlsafe(24)}\n" for key in env_keys)
-    else:
-        # token_urlsafe(24) produces exactly 32 URL-safe characters from 24 random bytes.
-        encoded = token_urlsafe(24)
 
     # Create the secret with agenix.
     chdir(tmp_dir)
@@ -130,6 +98,66 @@ def add(ctx, name: str, env_keys: tuple):
     # Handle output.
     os_remove(secrets_nix_path)
     print_secret_info(name, secrets_dir)
+
+
+@click.group()
+@click.option(
+    "--dir",
+    default=SECRETS_DIR,
+    show_default=True,
+    help="Override the default directory for storing and reading secrets.",
+)
+@click.pass_context
+def secrets(ctx, dir: str):
+    """Manage secrets with agenix."""
+    ctx.ensure_object(dict)
+    ctx.obj["dir"] = dir
+
+
+@secrets.command()
+@click.argument("name")
+@click.option(
+    "--env",
+    "env_keys",
+    multiple=True,
+    metavar="KEY",
+    help="Create an env file secret with KEY=<value>. Can be repeated for multiple keys.",
+)
+@click.pass_context
+def set(ctx, name: str, env_keys: tuple):
+    """Create a new secret with a provided value."""
+    if env_keys:
+        # Env file format: one KEY=value per line, each prompted individually.
+        encoded = "".join(
+            f"{key}={click.prompt(f'Enter value for {key}', hide_input=True)}\n"
+            for key in env_keys
+        )
+    else:
+        encoded = click.prompt("Enter secret value", hide_input=True)
+
+    _create_secret(ctx, name, encoded)
+
+
+@secrets.command()
+@click.argument("name")
+@click.option(
+    "--env",
+    "env_keys",
+    multiple=True,
+    metavar="KEY",
+    help="Generate an env file secret with KEY=<value>. Can be repeated for multiple keys.",
+)
+@click.pass_context
+def new(ctx, name: str, env_keys: tuple):
+    """Create a new secret with an auto-generated value."""
+    if env_keys:
+        # Env file format: one KEY=value per line, each with its own generated value.
+        encoded = "".join(f"{key}={token_urlsafe(24)}\n" for key in env_keys)
+    else:
+        # token_urlsafe(24) produces exactly 32 URL-safe characters from 24 random bytes.
+        encoded = token_urlsafe(24)
+
+    _create_secret(ctx, name, encoded)
 
 
 @secrets.command()
