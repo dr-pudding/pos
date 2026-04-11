@@ -1,7 +1,7 @@
 {pkgs ? import <nixpkgs> {}}: let
-    home-manager = builtins.fetchTarball {
-        url = "https://github.com/nix-community/home-manager/archive/release-25.11.tar.gz";
-        sha256 = "13qm9cij67ph5ng9lakd52dvivakvq58y00zshhik53vpfhk2xrr";
+    home-manager = builtins.fetchGit {
+        url = "https://github.com/nix-community/home-manager.git";
+        rev = "0d02ec1d0a05f88ef9e74b516842900c41f0f2fe";
     };
 
     nixosEval = import "${pkgs.path}/nixos/lib/eval-config.nix" {
