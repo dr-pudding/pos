@@ -1,4 +1,5 @@
 {
+    pkgs,
     config,
     lib,
     ...
@@ -11,7 +12,7 @@ with lib; {
             description = "Enable the latest version of Godot Engine.";
         };
 
-        remoteDebug.enable = mkOption {
+        enableRemoteDebug = mkOption {
             type = types.bool;
             default = false;
             description = "Open ports 6007 and 6008 for remote debugging.";
@@ -20,7 +21,7 @@ with lib; {
 
     config = mkIf (config.pos.godot.enable && config.pos.enable) {
         environment.systemPackages = with pkgs; [
-            godot
+            godot # Current version of Godot Engine.
         ];
 
         networking.firewall = mkIf config.pos.godot.remoteDebug.enable {
