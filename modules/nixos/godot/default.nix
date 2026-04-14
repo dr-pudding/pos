@@ -24,7 +24,7 @@ with lib; {
             godot # Current version of Godot Engine.
         ];
 
-        networking.firewall = mkIf config.pos.godot.remoteDebug.enable {
+        networking.firewall = mkIf config.pos.godot.enableRemoteDebug {
             allowedTCPPorts = [6007 6008];
             allowedUDPPorts = [6007 6008];
         };
